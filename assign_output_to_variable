@@ -1,0 +1,18 @@
+How to assign an output to variable in bash programming 
+ 
+ 
+var=$(command-name-here)
+var=$(command-name-here arg1)
+var=$(/path/to/command)
+var=$(/path/to/command arg1 arg2)
+ 
+
+OR
+
+ 
+var=`command-name-here`
+var=`command-name-here arg1`
+var=`/path/to/command`
+var=`/path/to/command arg1 arg2`
+
+http://www.cyberciti.biz/faq/unix-linux-bsd-appleosx-bash-assign-variable-command-output/
