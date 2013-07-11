@@ -1,0 +1,18 @@
+If you are looking for a way to display the length of time your script ran, the following will provide a (not completely accurate) result:
+
+As near the beginning of your script as you can, enter the following
+
+basetime=$(date +%s%N)
+
+This'll give you a starting value of something like 1361802943996000000
+
+At the end of your script, use the following
+
+echo "runtime: $(echo "scale=3;($(date +%s%N) - ${basetime})/(1*10^09)" | bc) seconds"
+
+which will display something like
+
+runtime: 12.383 seconds
+
+
+http://serverfault.com/questions/151109/how-do-i-get-current-unix-time-in-milliseconds-using-bash
