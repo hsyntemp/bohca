@@ -1,0 +1,86 @@
+A- Yeni kural eklemek
+I- Aralıklara kural eklemek -- insert ;)
+L- Kuralları listelemek
+
+N- İşlem eklemek
+X- İşlem silmek
+D- Kural silmek 
+F- Tüm kuralları silmek
+Z- Sayaçları sıfırlamak
+R- Kuralı Degistirmek
+
+
+iptables -F --> varolan butun kuralları siler.
+
+Prosedür--> 3 tane var: INPUT,OUTPUT,FORWARD
+INPUT: dışarıdan gelen patketler
+OUTPUT: dışarıya çıkan paketler
+FORWARD: dışarıdan gelen ve bizim üzerimizden geçen paketler
+
+islem sırasına gore sonraki iş PROTOKOLDUR.
+protokol denetimin yapılacagı yeri göstermektedir. Bu protokoller 
+TCP,UDP,ICMP,IGMP bu protokoller ile denetim yapıyoruz. Protokolleri
+kullanabilmek icin -p parametresini kullanıyoruz. 
+
+diger bir yapılacak iş ise HEDEF
+-d parametresini kullanırız. -d 10.0.0.2 dedigimizde 10.0.0.2 ip 
+adresini hedef olarak belirtmiş oluyoruz. Aynı şekilde hedef portunu da
+-dport parametresi ile belirtmiş oluyoruz. -d 10.0.0.2 -dport 80 dedigimizde
+10.0.0.2 ip numarasının 80 numaralı portunu hedef olarak belirlemiş oluyoruz.
+
+sonraki işlem sıramızda KAYNAK yer almaktadır. Yapılacak işin kaynağını -s parametresi
+ile belirtiriz. kullanımı aynı Hedef işlemi gibidir. port belirtmek gerekirse -sport 
+parametresi kullanılır. 
+
+Son işlemimiz denetimdir. Yapılacak işin denetimini belitmemiz gerekmektedir. 
+DROP : Yasaklamak
+ACCEPT : İzin vermek
+REJECT : Yasaklamak ve yasak cevabını gondermek
+LOG : İşlemlerimizin kaydını tutmak
+
+**********************************************************
+iptables -L : bu komut ile tüm iptables kurallarını listeleyebiliriz
+
+iptables -F : bu komut ile bütün kuralları sıfırlayabiliriz
+
+şimdi işlem sıramıza göre sunucumuzun 80 portunu kapatalım
+iptables -A INPUT -p tcp -s 0/0 --dport 80 -j DROP
+
+-A kullanarak yeni kural ekleyecegiz.
+INPUT ile dışarıdan gelen istekleri kasteddik
+-p tcp ile tcp protokolünü
+-s 0/0 ile tüm ip adreslerini kaynak belirterek
+-dport 80 ile 80 portunu hedef gosterip
+DROP ile yasakladık
+
+Sunucumuzun 80 portu kapalı olsaydı DROP yerine ACCEPT yazmamızla 80 portunu açabilirdik
+
+Sunuculara ping atılmasını yasaklayalım.
+iptables -A INPUT -p ICMP -j DROP
+
+Yine bir başka örnek de ip banlamak yani oluşturmak olsun:
+
+iptables -A INPUT -s 10.0.0.2 -j DROP
+
+Yine belli bir networkü sunucumuzdan uzak tutmak istiyorsak
+
+iptables -A INPUT -s  10.0.0.0/8 -j DROP
+10.0.0.0/8 ip aralıgından uzaklaştırılacaktır.
+
+Engelenen bir ip adresinin bloktan kaldırılması icin -A yerine -D kullanarak engelini kaldırabliriz
+
+iptables -D INPUT -s 10.0.0.2 -j DROP
+
+http://www.linuxhomenetworking.com/wiki/index.php/Quick_HOWTO_:_Ch14_:_Linux_Firewalls_Using_iptables#.UefXQ-GJR2M
+
+
+
+
+
+
+
+
+
+
+
+
