@@ -1,0 +1,90 @@
+
+Tech Thoughts Avatar
+
+    RSS feed
+    Archive
+    Send email
+    Ask me anything
+
+Tech Thoughts
+
+All geeky stuff, useful tips and tricks, Q&A, troubleshooting and occasional thoughts on current state and happenings in tech-sphere.
+
+    Tips
+    How-To
+    Windows
+    Linux
+    Beta
+    Mobile
+    Tech
+    WebD/UX
+    Thoughts
+    About
+    Contact
+
+Posted 1 year ago
+by nisargam
+Setting / Forcing /Changing Fedora 15 screen resolution to optimum.
+
+With Fedora sometimes monitor resolution is set to generic i.e. because of lack of drivers for monitor screen resolution is set to lowest possible. Plus point of this approach is that it it can basically run on any system where monitor is not detected. Minus point is, well very obvious, that you can’t use the complete screen real estate and display looks blocky.
+
+Here is a trick which I found after going through various help sites which should help you to ‘Force the Screen Resolution’ in Fedora 15. It’s pretty straight forward. Just few commands and you are done. Only pre-requisite is that you should have root access or be part of Administrative User Group. Process is quite simple - First a bit of research about your monitor model and display modes@refresh rates that it supports. Second with use of ‘cvt’ command calculate the VESA cvt mode lines for a given resolution. Third step is to set the new mode, add the mode and output that mode using ‘xrandr’ command. ‘xrandr’ command changes your screen resolution on-the-fly and just for the session. There are ways to manually edit the Xorg configuration file, but that requires restarting X and could be quite disastrous. That brings us to the last step, here we are using ‘xrandr’ the screen resolution will be changed only for session and as you restart the X it will shift back to the lower resolutions, to work around what we are going to do is add the ‘xrandr’ command that we issued earlier to get desired output to the startup script of our session.
+
+So let’s get our hands dirty with this :) :
+
+    Research your monitor model : Look it up on Google or Bing. Looks for the highest supported resolution / desired resolution with refresh rates. In my case it is 1680x1050 @ 60 hz.
+    Go to terminal. Depends on packages that you have installed. Shortcut would be Press Alt+F2 and enter command ‘xterm’, press enter. You should be now in Terminal window.
+    Enter command in this format : cvt ‘your horizontal resolution’ ‘your vertical resolution’ ‘refresh rate’, in my case my horizontal resolution is 1680, vertical resolution is 1050 and refresh rate is 60 hz. So the command will be : cvt 1680 1050 60  and press Enter. 
+    If everything went well you will get some output like this on your screen (may differ for different resolutions) : 
+    # 1680x1050 59.95 Hz (CVT 1.76MA) hsync: 65.29 kHz; pclk: 146.25 MHz
+    Modeline "1680x1050_60.00"  146.25  1680 1784 1960 2240  1050 1053 1059 1089 -hsync +vsync
+    In the above output line, the line after ‘Modeline’ is what we need. This is the mode which we need to create with the help of ‘xrandr’ command. In this step we will create this mode for our screen by issuing the command : xrandr —newmode ‘your modeline’
+    in my case it will be : xrandr —newmode "1680x1050_60.00"  146.25  1680 1784 1960 2240  1050 1053 1059 1089 -hsync +vsync and press enter.
+    If everything works fine without error we can now add this newly created mode. For this issue the command : xrandr —addmode ‘your display name’ ‘your screen resolution’
+    in my case this will be xrandr —addmode VGA1 1680x1050_60.00 and press enter. Here make a note about the VGA1 option this is your display name i.e how your screen is connected, in my case it is connected on VGA1 port. This would be useful and changed if you have connected your monitor through DVI or if you have multi-monitor setup where you can force screen resolution on different displays.
+    If the above step goes without error, we are all set to test out settings. We do this by issuing command : xrandr —output ‘your display name’ —mode ‘your resolution’
+    in my case it will be xrandr —output VGA1 —mode 1680x1050_60.00 and press enter.
+    Now with this command you should be able to see the changes in screen resolution. If it works properly we are all set to add these changes to our startup file. 
+    Final step, add these command to be executed at the beginning of session. For this we will need root access. In terminal get root access by issuing command : su
+    or you can use ‘sudo’ command if you have that privilege.
+    This is what we need to do to at terminal :
+    Issue command : sudo nano /etc/gdm/Init/Default (for Gnome)
+    or sudo nano /etc/kde4/kdm/Xsetup 
+    (You can use any editor that you like instead on nano you can have gedit if you are in Gnome.)
+    Ubuntu 11.10 users refer here. Rest of Fedora and Ubuntu users prior to 11.10, these steps works fine. 
+      
+    Once the file is open for editing add all the above ‘xrandr’commands in sequence to the file after these lines.
+    PATH="/usr/bin:$PATH"
+    OLD_IFS=$IFS
+
+    Sequence of ‘xrandr’ commands should look something like this (in my case):
+    xrandr —newmode "1680x1050_60.00"  146.25  1680 1784 1960 2240  1050 1053 1059 1089 -hsync +vsync
+    xrandr —addmode VGA1 1680x1050_60.00
+    xrandr —output VGA1 —mode 1680x1050_60.00
+
+    Add the above sequence to the files and save them.
+    Please note we are not adding the ‘cvt’ command.
+    This all what is needed to be done. Test is once or twice. Sometimes, for the first login after applying the this  the screen resolution will still be at low resolution. This is because we need to change screen resolution for the screen. For this Go to ‘System Settings’ and select ‘Displays’ option. Your new screen resolution modes must be there in options now. Select the desired mode and apply it. 
+
+So this is basically it.
+
+Any questions, problems or error received please let me know through comment or directly ask me question.
+
+Note : This should work for GNOME and KDE alike. Even in other version of Linux. For specific version contact me with version you are using and error you are receiving.
+
+VERY IMPORTANT : If you are copy pasting the commands from here please put the ‘-’ hypen manually. At some places like - - newmode - - addmode there are two hypens and will not be appearing properly in copy paste.
+
+Tags
+tipshow-tolinuxfedora
+2 Reblogs
+
+     
+
+New
+Old
+
+All work/thoughts unless or otherwise stated are credited to Mr. Satyajit Tambe. Reposting or sharing is allowed. Credit with link will be appreciated. Solaris theme by Matthew Buchanan.
+
+
+
+http://tech.isatya.in/post/9090316930/setting-forcing-changing-fedora-15-screen-resolution
